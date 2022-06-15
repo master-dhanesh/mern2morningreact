@@ -1,7 +1,5 @@
-import { useState } from "react";
-
-const Mytime = () => {
-    const [mytime, setMytime] = useState(new Date().toLocaleTimeString());
+const Mytime = (props) => {
+    const { mytime, setMytime } = props.mytime;
 
     setInterval(() => {
         setMytime(new Date().toLocaleTimeString());

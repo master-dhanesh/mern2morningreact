@@ -1,14 +1,5 @@
-import { useState } from "react";
-
-const Mydate = () => {
-    const [mydate, setMydate] = useState(
-        new Date().toLocaleDateString("default", {
-            year: "numeric",
-            day: "numeric",
-            month: "short",
-            weekday: "short",
-        })
-    );
+const Mydate = (props) => {
+    const { mydate, setMydate } = props.mydate;
     return (
         <div>
             <h4>Present Date</h4>
