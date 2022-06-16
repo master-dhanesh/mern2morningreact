@@ -1,28 +1,36 @@
 const App = () => {
     const SubmitHandler = (e) => {
         e.preventDefault();
-        let [username, password] = e.target;
-        let newUser = { username: username.value, password: password.value };
-        console.log(newUser);
+        let [item] = e.target;
+        let todo = { item: item.value };
+        console.log(todo);
     };
 
     return (
-        <div className="container mt-5 alert alert-dark">
-            <form onSubmit={SubmitHandler}>
+        <div className="container mt-5">
+            <form onSubmit={SubmitHandler} className="row">
+                <div className="col-md-4"></div>
                 <input
-                    name="username"
-                    placeholder="Username"
-                    className="form-control w-25 mb-3"
+                    name="item"
+                    placeholder="Item Name"
+                    className="form-control w-25 me-2 col-md-5"
                     type="text"
                 />
-                <input
-                    name="password"
-                    placeholder="Password"
-                    className="form-control w-25 mb-3"
-                    type="password"
-                />
-                <button className="btn btn-primary w-25">Submit</button>
+                <button className="btn btn-primary col-md-1">Submit</button>
             </form>
+            <hr className="w-50 m-auto mt-3 mb-3" />
+
+            <ol className="w-50 m-auto list-group list-group-numbered">
+                <li className="list-group-item d-flex justify-content-between align-items-start">
+                    <div className="ms-2 me-auto">
+                        <div className="fw-bold">Subheading</div>
+                        Hello World
+                    </div>
+                    <span role="button" className="badge rounded-pill">
+                        ❌
+                    </span>
+                </li>
+            </ol>
         </div>
     );
 };
