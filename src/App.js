@@ -1,73 +1,48 @@
 import axios from "axios";
-import React, { Component } from "react";
+import { useEffect, useState } from "react";
 import Show from "./Components/Show";
 
-class App extends Component {
-    state = {
-        show: true,
-        posts: [],
-    };
+const App = () => {
+    const [posts, setPosts] = useState([]);
+    const [show, setShow] = useState(false);
 
-    constructor() {
-        super();
-        console.log("--CONSTRUCTOR APP.JS");
-    }
-
-    render() {
-        console.log("--RENDER APP.JS", this.state);
-        return (
-            <div className="container mt-5 alert alert-success p-5">
-                <button
-                    onClick={() => this.setState({ show: !this.state.show })}
-                    className="btn btn-primary"
-                >
-                    {this.state.show ? "Hide" : "Show"}
-                </button>
-                {this.state.show && <Show />}
-                <hr />
-                {this.state.posts.map((post) => (
-                    <p key={post.id}>{post.title}</p>
-                ))}
-            </div>
-        );
-    }
-
-    async componentDidMount() {
-        console.log("--COMPONENTDIDMOUNT APP.JS");
-        this.fetchPosts();
-    }
-
-    fetchPosts = async () => {
+    const fetchPosts = async () => {
         const { data } = await axios.get(
             `https://jsonplaceholder.typicode.com/posts`
         );
-        this.setState({ posts: data });
+        setPosts(data);
     };
 
-    componentDidUpdate(prevProps, prevState) {
-        console.log("COMPONENTDIDUPDATE APP.JS", prevProps, prevState);
-    }
-}
+    useEffect(() => {
+        if (posts.length == 0) {
+            fetchPosts();
+        }
+
+        return () => {
+            console.log("COMPONENT DELETED!");
+        };
+    }, [show]);
+
+    console.log(show);
+
+    return (
+        <div className="container mt-5">
+            <button onClick={fetchPosts} className="btn btn-primary">
+                Fetch Posts
+            </button>{" "}
+            |
+            <button onClick={() => setShow(!show)} className="btn btn-primary">
+                Invert Show
+            </button>{" "}
+            |
+            <button onClick={() => setPosts([])} className="btn btn-primary">
+                Empty Posts
+            </button>
+            {show && <Show />}
+            <hr />
+            {JSON.stringify(posts, null, 4)}
+        </div>
+    );
+};
 
 export default App;
-
-// import axios from "axios";
-
-// const App = () => {
-//     const fetchPosts = async () => {
-//         const { data } = await axios.get(
-//             `https://jsonplaceholder.typicode.com/posts`
-//         );
-//         console.log(data);
-//     };
-
-//     return (
-//         <div className="container mt-5">
-//             <button onClick={fetchPosts} className="btn btn-primary">
-//                 Fetch Posts
-//             </button>
-//         </div>
-//     );
-// };
-
-// export default App;
