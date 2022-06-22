@@ -1,46 +1,50 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Show from "./Components/Show";
+import ReactPaginate from "react-paginate";
+import "./App.css";
 
 const App = () => {
-    const [posts, setPosts] = useState([]);
-    const [show, setShow] = useState(false);
-
-    const fetchPosts = async () => {
-        const { data } = await axios.get(
-            `https://jsonplaceholder.typicode.com/posts`
-        );
-        setPosts(data);
-    };
+    const [currentPage, setCurrentPage] = useState(1);
+    const [images, setImages] = useState([]);
 
     useEffect(() => {
-        if (posts.length == 0) {
-            fetchPosts();
-        }
+        fetchImages();
+    }, [currentPage]);
 
-        return () => {
-            console.log("COMPONENT DELETED!");
-        };
-    }, [show]);
+    const fetchImages = async () => {
+        const { data } = await axios.get(
+            `https://picsum.photos/v2/list?page=${currentPage}&limit=12`
+        );
+        setImages(data);
+    };
 
-    console.log(show);
-
+    const handlePageClick = (event) => {
+        setCurrentPage(event.selected + 1);
+    };
     return (
         <div className="container mt-5">
-            <button onClick={fetchPosts} className="btn btn-primary">
-                Fetch Posts
-            </button>{" "}
-            |
-            <button onClick={() => setShow(!show)} className="btn btn-primary">
-                Invert Show
-            </button>{" "}
-            |
-            <button onClick={() => setPosts([])} className="btn btn-primary">
-                Empty Posts
-            </button>
-            {show && <Show />}
+            <div className="images">
+                {images.map((image) => (
+                    <div className="image" key={image.id}>
+                        <div
+                            style={{
+                                backgroundImage: `url(${image.download_url})`,
+                            }}
+                        ></div>
+                        <p>{image.author}</p>
+                    </div>
+                ))}
+            </div>
             <hr />
-            {JSON.stringify(posts, null, 4)}
+            <ReactPaginate
+                breakLabel="..."
+                nextLabel=">>"
+                onPageChange={handlePageClick}
+                pageRangeDisplayed={5}
+                pageCount={10}
+                previousLabel="<<"
+                renderOnZeroPageCount={null}
+            />
         </div>
     );
 };
