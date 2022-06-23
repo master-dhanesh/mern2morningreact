@@ -1,51 +1,25 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import ReactPaginate from "react-paginate";
-import "./App.css";
+import Gallery from "./Components/Gallery";
+import Navigation from "./Components/Navigation";
+import Home from "./Components/Home";
+import Contact from "./Components/Contact";
+import About from "./Components/About";
+
+import { Routes, Route } from "react-router-dom";
 
 const App = () => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [images, setImages] = useState([]);
-
-    useEffect(() => {
-        fetchImages();
-    }, [currentPage]);
-
-    const fetchImages = async () => {
-        const { data } = await axios.get(
-            `https://picsum.photos/v2/list?page=${currentPage}&limit=12`
-        );
-        setImages(data);
-    };
-
-    const handlePageClick = (event) => {
-        setCurrentPage(event.selected + 1);
-    };
     return (
-        <div className="container mt-5">
-            <div className="images">
-                {images.map((image) => (
-                    <div className="image" key={image.id}>
-                        <div
-                            style={{
-                                backgroundImage: `url(${image.download_url})`,
-                            }}
-                        ></div>
-                        <p>{image.author}</p>
-                    </div>
-                ))}
-            </div>
-            <hr />
-            <ReactPaginate
-                breakLabel="..."
-                nextLabel=">>"
-                onPageChange={handlePageClick}
-                pageRangeDisplayed={5}
-                pageCount={10}
-                previousLabel="<<"
-                renderOnZeroPageCount={null}
-            />
-        </div>
+        <>
+            <Navigation />
+
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/gallery" element={<Gallery />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/about" element={<About />} />
+            </Routes>
+        </>
+
+        // https://picsum.photos/id/34/info
     );
 };
 

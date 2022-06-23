@@ -41,3 +41,11 @@ ul > li {
     background-position: center;
     background-repeat: no-repeat;
 }
+
+a {
+    text-decoration: none !important;
+}
+
+.image > p {
+    color: tomato;
+}
