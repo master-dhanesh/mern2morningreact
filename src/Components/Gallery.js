@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import "../App.css";
 
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 const Gallery = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -25,6 +25,8 @@ const Gallery = () => {
     };
     return (
         <div className="container mt-5">
+            <Outlet />
+            <hr />
             <div className="images">
                 {images.map((image) => (
                     <Link
