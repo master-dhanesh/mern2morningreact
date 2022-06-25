@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Gallery from "./Components/Gallery";
 import Single from "./Components/Single";
@@ -8,7 +8,7 @@ import Contact from "./Components/Contact";
 import About from "./Components/About";
 import axios from "axios";
 
-export const ImagesContext = createContext();
+import Context from "./Context";
 
 const App = () => {
     const [images, setImages] = useState([]);
@@ -32,7 +32,8 @@ const App = () => {
     return (
         <>
             <Navigation />
-            <ImagesContext.Provider value={{ images, setImages }}>
+
+            <Context value={{ images, setImages }}>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     {/* <Route path="/gallery" element={<Gallery />} />
@@ -46,7 +47,7 @@ const App = () => {
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/about" element={<About />} />
                 </Routes>
-            </ImagesContext.Provider>
+            </Context>
         </>
     );
 };

@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import Loading from "../assets/loader.gif";
-import { ImagesContext } from "../App";
+import { ImagesContext } from "../Context";
 
 const Single = () => {
     const { images, setImages } = useContext(ImagesContext);

@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import { Link, Outlet } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import "../App.css";
-import { ImagesContext } from "../App";
+import { ImagesContext } from "../Context";
 
 const Gallery = ({ handlePageClick }) => {
     const { images, setImages } = useContext(ImagesContext);
