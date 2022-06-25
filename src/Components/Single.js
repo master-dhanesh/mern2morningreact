@@ -1,21 +1,22 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import Loading from "../assets/loader.gif";
+import { ImagesContext } from "../App";
 
 const Single = () => {
+    const { images, setImages } = useContext(ImagesContext);
     const [Image, setImage] = useState(null);
     const { id } = useParams();
 
     useEffect(() => {
-        // if (!Image) {
         fetchImage();
-        // }
     }, [id]);
 
     const fetchImage = async () => {
-        const { data } = await axios.get(`https://picsum.photos/id/${id}/info`);
-        setImage(data);
+        if (images) {
+            let currentImage = images.filter((img) => img.id == id)[0];
+            setImage(currentImage);
+        }
     };
 
     return Image ? (
