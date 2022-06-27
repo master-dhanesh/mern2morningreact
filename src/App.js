@@ -1,55 +1,55 @@
-import { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
-import Gallery from "./Components/Gallery";
-import Single from "./Components/Single";
-import Navigation from "./Components/Navigation";
-import Home from "./Components/Home";
-import Contact from "./Components/Contact";
-import About from "./Components/About";
+import React, { useEffect } from "react";
 import axios from "axios";
 
-import Context from "./Context";
-
 const App = () => {
-    const [images, setImages] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    // Add a request interceptor
+    axios.interceptors.request.use(
+        function (config) {
+            // axios.defaults.headers.common["Authorization"] = "AUTH_TOKEN";
+
+            console.log("--I'M GOING--");
+            console.log(config);
+
+            return config;
+        },
+        function (error) {
+            // Do something with request error
+            return Promise.reject(error);
+        }
+    );
+
+    // Add a response interceptor
+    axios.interceptors.response.use(
+        function (response) {
+            console.log("--I'M COMING--");
+            console.log(response);
+
+            return response.data.results.splice(10, 10);
+        },
+        function (error) {
+            return Promise.reject(error);
+        }
+    );
 
     useEffect(() => {
-        fetchImages();
-    }, [currentPage]);
+        fetchMovies();
+    }, []);
 
-    const fetchImages = async () => {
-        const { data } = await axios.get(
-            `https://picsum.photos/v2/list?page=${currentPage}&limit=12`
-        );
-        setImages(data);
+    const fetchMovies = async () => {
+        try {
+            const upcoming = await axios.get(
+                `https://api.themoviedb.org/3/movie/upcoming?api_key=223667d1239871fc4b6eeef8d0d6def8&language=en-US&page=1`
+                // {
+                //     headers: { api: "jksdfn9834jkds" },
+                // }
+            );
+            console.log(upcoming);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
-    const handlePageClick = (event) => {
-        setCurrentPage(event.selected + 1);
-    };
-
-    return (
-        <>
-            <Navigation />
-
-            <Context value={{ images, setImages }}>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    {/* <Route path="/gallery" element={<Gallery />} />
-                <Route path="/gallery/:id" element={<Single />} /> */}
-                    <Route
-                        path="/gallery"
-                        element={<Gallery handlePageClick={handlePageClick} />}
-                    >
-                        <Route path="/gallery/:id" element={<Single />} />
-                    </Route>
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/about" element={<About />} />
-                </Routes>
-            </Context>
-        </>
-    );
+    return <div>App</div>;
 };
 
 export default App;
