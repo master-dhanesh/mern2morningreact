@@ -1,55 +1,41 @@
-import React, { useEffect } from "react";
-import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import {
+    increment,
+    decrement,
+    changeByAmount,
+    AsyncChangeByValue,
+} from "./features/counter/counterSlice";
 
 const App = () => {
-    // Add a request interceptor
-    axios.interceptors.request.use(
-        function (config) {
-            // axios.defaults.headers.common["Authorization"] = "AUTH_TOKEN";
-
-            console.log("--I'M GOING--");
-            console.log(config);
-
-            return config;
-        },
-        function (error) {
-            // Do something with request error
-            return Promise.reject(error);
-        }
-    );
-
-    // Add a response interceptor
-    axios.interceptors.response.use(
-        function (response) {
-            console.log("--I'M COMING--");
-            console.log(response);
-
-            return response.data.results.splice(10, 10);
-        },
-        function (error) {
-            return Promise.reject(error);
-        }
-    );
-
-    useEffect(() => {
-        fetchMovies();
-    }, []);
-
-    const fetchMovies = async () => {
-        try {
-            const upcoming = await axios.get(
-                `https://api.themoviedb.org/3/movie/upcoming?api_key=223667d1239871fc4b6eeef8d0d6def8&language=en-US&page=1`
-                // {
-                //     headers: { api: "jksdfn9834jkds" },
-                // }
-            );
-            console.log(upcoming);
-        } catch (error) {
-            console.log(error);
-        }
+    const dispatch = useDispatch();
+    const { value } = useSelector((state) => state.counter);
+    const OnIncrement = () => {
+        dispatch(increment());
     };
 
-    return <div>App</div>;
+    const OnDecrement = () => {
+        dispatch(decrement());
+    };
+
+    const ChangeByValue = () => {
+        // dispatch(changeByAmount(10));
+        dispatch(AsyncChangeByValue(10));
+    };
+
+    return (
+        <div className="container mt-5 alert d-flex">
+            <button onClick={OnIncrement} className="w-25 btn btn-primary">
+                +
+            </button>
+            <h1 className="w-25 text-center">{value}</h1>
+            <button onClick={OnDecrement} className="w-25 btn btn-danger">
+                -
+            </button>
+            <button onClick={ChangeByValue} className="w-25 btn btn-info">
+                Change By Value
+            </button>
+        </div>
+    );
 };
 
 export default App;
