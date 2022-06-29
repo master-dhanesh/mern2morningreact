@@ -1,38 +1,73 @@
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import app from "./firebase";
 import {
-    increment,
-    decrement,
-    changeByAmount,
-    AsyncChangeByValue,
-} from "./features/counter/counterSlice";
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut,
+} from "firebase/auth";
 
 const App = () => {
-    const dispatch = useDispatch();
-    const { value } = useSelector((state) => state.counter);
-    const OnIncrement = () => {
-        dispatch(increment());
+    const [loggedin, setLoggedin] = useState(false);
+    const auth = getAuth(app);
+
+    useEffect(() => {
+        restoresession();
+        if (!loggedin) console.log("User Unauthenticated");
+        else console.log("User Authenticated");
+    }, [loggedin]);
+
+    const restoresession = async () => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setLoggedin(true);
+            }
+        });
     };
 
-    const OnDecrement = () => {
-        dispatch(decrement());
+    const signup = async () => {
+        try {
+            const userinfo = await createUserWithEmailAndPassword(
+                auth,
+                "dhanesh@gmail.com",
+                "1234567890"
+            );
+            setLoggedin(true);
+            console.log(userinfo);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
-    const ChangeByValue = () => {
-        // dispatch(changeByAmount(10));
-        dispatch(AsyncChangeByValue(10));
+    const signin = async () => {
+        try {
+            const userinfo = await signInWithEmailAndPassword(
+                auth,
+                "dhanesh@gmail.com",
+                "1234567890"
+            );
+            setLoggedin(true);
+            console.log(userinfo);
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+
+    const signout = async () => {
+        await signOut(auth);
     };
 
     return (
-        <div className="container mt-5 alert d-flex">
-            <button onClick={OnIncrement} className="w-25 btn btn-primary">
-                +
+        <div className="container alert mt-5 ">
+            <button onClick={signup} className="btn btn-primary me-5">
+                Signup
             </button>
-            <h1 className="w-25 text-center">{value}</h1>
-            <button onClick={OnDecrement} className="w-25 btn btn-danger">
-                -
+            <button onClick={signin} className="btn btn-primary me-5">
+                Signin
             </button>
-            <button onClick={ChangeByValue} className="w-25 btn btn-info">
-                Change By Value
+            <button onClick={signout} className="btn btn-primary me-5">
+                Signout
             </button>
         </div>
     );
