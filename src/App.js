@@ -1,73 +1,73 @@
-import React, { useEffect, useState } from "react";
 import app from "./firebase";
 import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    onAuthStateChanged,
-    signOut,
-} from "firebase/auth";
+    addDoc,
+    collection,
+    deleteDoc,
+    getDocs,
+    getFirestore,
+    doc,
+    setDoc,
+} from "firebase/firestore";
 
 const App = () => {
-    const [loggedin, setLoggedin] = useState(false);
-    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const schema = collection(db, "user");
 
-    useEffect(() => {
-        restoresession();
-        if (!loggedin) console.log("User Unauthenticated");
-        else console.log("User Authenticated");
-    }, [loggedin]);
-
-    const restoresession = async () => {
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setLoggedin(true);
-            }
-        });
-    };
-
-    const signup = async () => {
+    const CreateUser = async () => {
         try {
-            const userinfo = await createUserWithEmailAndPassword(
-                auth,
-                "dhanesh@gmail.com",
-                "1234567890"
-            );
-            setLoggedin(true);
-            console.log(userinfo);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const signin = async () => {
-        try {
-            const userinfo = await signInWithEmailAndPassword(
-                auth,
-                "dhanesh@gmail.com",
-                "1234567890"
-            );
-            setLoggedin(true);
-            console.log(userinfo);
+            const docref = await addDoc(schema, {
+                username: "Smith",
+                city: "UAE",
+            });
+            console.log("User Created.", docref.id);
         } catch (error) {
             console.log(error.message);
         }
     };
 
-    const signout = async () => {
-        await signOut(auth);
+    const ReadUsers = async () => {
+        try {
+            const docs = await getDocs(schema);
+            const allusers = [];
+            docs.forEach((doc) => {
+                allusers.push({ id: doc.id, ...doc.data() });
+            });
+            console.log(allusers);
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+
+    const DeleteUser = async () => {
+        try {
+            await deleteDoc(doc(schema, "nOUAKJGWFq9b7937Z6lt"));
+            console.log("User Deleted");
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+
+    const UpdateUser = async () => {
+        await setDoc(doc(schema, "sjFBIFEkXwLFzwKhxXvZ"), {
+            username: "Jenney json",
+            city: "UAE",
+        });
+        console.log("User Updated");
     };
 
     return (
-        <div className="container alert mt-5 ">
-            <button onClick={signup} className="btn btn-primary me-5">
-                Signup
+        <div className="container mt-5 alert">
+            <button onClick={CreateUser} className="btn btn-primary me-3">
+                Create User
             </button>
-            <button onClick={signin} className="btn btn-primary me-5">
-                Signin
+            <button onClick={ReadUsers} className="btn btn-primary me-3">
+                Read Users
             </button>
-            <button onClick={signout} className="btn btn-primary me-5">
-                Signout
+            <button onClick={DeleteUser} className="btn btn-primary me-3">
+                Delete User
+            </button>
+            <button onClick={UpdateUser} className="btn btn-primary me-3">
+                Update User
             </button>
         </div>
     );
