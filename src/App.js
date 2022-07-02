@@ -1,73 +1,52 @@
 import app from "./firebase";
 import {
-    addDoc,
-    collection,
-    deleteDoc,
-    getDocs,
-    getFirestore,
-    doc,
-    setDoc,
-} from "firebase/firestore";
-
+    getDownloadURL,
+    getStorage,
+    ref,
+    uploadBytes,
+    deleteObject,
+    listAll,
+} from "firebase/storage";
 const App = () => {
-    const db = getFirestore(app);
-    const schema = collection(db, "user");
+    const storage = getStorage(app);
 
-    const CreateUser = async () => {
-        try {
-            const docref = await addDoc(schema, {
-                username: "Smith",
-                city: "UAE",
-            });
-            console.log("User Created.", docref.id);
-        } catch (error) {
-            console.log(error.message);
-        }
+    const UploadFile = async (e) => {
+        const imagenewname =
+            "FS-" + Date.now() + "." + e.target.files[0].name.split(".").at(-1);
+        const storageref = await ref(storage, imagenewname);
+        await uploadBytes(storageref, e.target.files[0]);
+        const download_url = await getDownloadURL(storageref);
+        console.log(download_url);
     };
 
-    const ReadUsers = async () => {
-        try {
-            const docs = await getDocs(schema);
-            const allusers = [];
-            docs.forEach((doc) => {
-                allusers.push({ id: doc.id, ...doc.data() });
-            });
-            console.log(allusers);
-        } catch (error) {
-            console.log(error.message);
-        }
+    const DeleteImage = async () => {
+        const imageref = ref(storage, "FS-1656756783787.jpg");
+        await deleteObject(imageref);
+        console.log("Image Deleted");
     };
 
-    const DeleteUser = async () => {
-        try {
-            await deleteDoc(doc(schema, "nOUAKJGWFq9b7937Z6lt"));
-            console.log("User Deleted");
-        } catch (error) {
-            console.log(error.message);
-        }
-    };
-
-    const UpdateUser = async () => {
-        await setDoc(doc(schema, "sjFBIFEkXwLFzwKhxXvZ"), {
-            username: "Jenney json",
-            city: "UAE",
+    const ListAllImages = async () => {
+        const allImageRef = ref(storage);
+        const images = await listAll(allImageRef);
+        images.items.forEach((item) => {
+            getDownloadURL(item).then((url) => console.log(url));
         });
-        console.log("User Updated");
     };
 
     return (
         <div className="container mt-5 alert">
-            <button onClick={CreateUser} className="btn btn-primary me-3">
-                Create User
+            <input
+                className="w-25 form-control me-3 "
+                type="file"
+                onChange={UploadFile}
+            />
+            <br />
+            <button onClick={DeleteImage} className="btn btn-primary me-3">
+                Delete Image
             </button>
-            <button onClick={ReadUsers} className="btn btn-primary me-3">
-                Read Users
-            </button>
-            <button onClick={DeleteUser} className="btn btn-primary me-3">
-                Delete User
-            </button>
-            <button onClick={UpdateUser} className="btn btn-primary me-3">
-                Update User
+            <br /> <br />
+            <button onClick={ListAllImages} className="btn btn-primary me-3">
+                List Images
             </button>
         </div>
     );
